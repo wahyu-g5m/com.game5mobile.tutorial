@@ -6,30 +6,62 @@ namespace Five.Tutorial
     {
         private bool isDone;
 
-        protected abstract IEnumerator InitializeRoutine();
-        protected abstract IEnumerator RunRoutine();
-        public abstract IEnumerator DisposeRoutine();
+        protected abstract IEnumerator OnInitializeRoutine();
+        protected abstract IEnumerator OnRunRoutine();
+        protected abstract IEnumerator OnDisposeRoutine();
 
-        public virtual void EndRun()
+        public IEnumerator InitializeRoutine()
         {
-            isDone = true;
+            yield return OnInitializeRoutine();
         }
 
-        public IEnumerator ExecuteRoutine()
+        public IEnumerator RunThenDisposeRoutine()
         {
-            yield return InitializeRoutine();
+            if (isDone)
+            {
+                yield return OnDisposeRoutine();
+                yield break;
+            }
 
             if (GetState() == State.Ready)
             {
-                yield return RunRoutine();
+                yield return OnRunRoutine();
 
                 while (!isDone)
                 {
                     yield return null;
                 }
 
-                yield return DisposeRoutine();
+                yield return OnDisposeRoutine();
             }
+        }
+
+        public IEnumerator InitializeRunThenDisposeRoutine()
+        {
+            yield return InitializeRoutine();
+
+            if (isDone)
+            {
+                yield return OnDisposeRoutine();
+                yield break;
+            }
+
+            if (GetState() == State.Ready)
+            {
+                yield return OnRunRoutine();
+
+                while (!isDone)
+                {
+                    yield return null;
+                }
+
+                yield return OnDisposeRoutine();
+            }
+        }
+
+        protected void EndRun()
+        {
+            isDone = true;
         }
     }
 }

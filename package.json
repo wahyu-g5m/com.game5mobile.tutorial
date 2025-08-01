@@ -1,6 +1,6 @@
 {
 	"name": "com.game5mobile.tutorial",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"displayName": "Five - Tutorial",
 	"description": "Base class for tutorials",
 	"unity": "2021.3",
